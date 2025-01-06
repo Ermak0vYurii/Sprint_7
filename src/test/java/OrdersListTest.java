@@ -1,2 +1,4 @@
-public class OrdersListTest {
+public class OrdersListTest extends BaseHttpClient {
+
+
 }
