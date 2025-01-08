@@ -1,3 +1,6 @@
+import io.qameta.allure.Description;
+import io.qameta.allure.Step;
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +28,8 @@ public class CreateOrderTest extends BaseHttpClient {
     }
 
     @Test
+    @DisplayName("Проверка оформления заказа")
+    @Description("Оформление заказа с цветом BLACK, GREY, BLACK и GREY, без указания цвета")
     public void createOrderTest() {
         Order order = new Order("ivan",
                                 "petrov",
@@ -35,8 +40,23 @@ public class CreateOrderTest extends BaseHttpClient {
                                 "2025-01-06",
                                 "comment",
                                 color.split(","));
-        Response response = doPostRequest("api/v1/orders", order);
-        response.then().statusCode(201)
-                .assertThat().body("track", notNullValue());
+        Response response = createOrder(order);
+        compareStatusCode(response, 201);
+                responseBodyHaveTrack(response);
+    }
+
+    @Step("Send POST request to api/v1/orders")
+    public Response createOrder(Object order) {
+        return doPostRequest("api/v1/orders", order);
+    }
+
+    @Step("Compare status code")
+    public void compareStatusCode(Response response, int code) {
+        response.then().statusCode(code);
+    }
+
+    @Step("Response body have track field")
+    public void responseBodyHaveTrack(Response response) {
+        response.then().assertThat().body("track", notNullValue());
     }
 }

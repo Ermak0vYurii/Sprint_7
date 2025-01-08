@@ -29,8 +29,8 @@ public abstract class BaseHttpClient {
                 .thenReturn();
     }
 
-    protected Response doDeleteRequest(String path) {
-        return given()
+    protected void doDeleteRequest(String path) {
+        given()
                 .spec(baseRequestSpec)
                 .delete(path)
                 .thenReturn();
