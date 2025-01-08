@@ -31,28 +31,40 @@ public class LoginCourierTest extends BaseHttpClient {
     public Response loginCourier() {
        return doPostRequest("api/v1/courier/login", loginCourier);
     }
+    @Step("Compare status code")
+    public void compareStatusCode(Response response, int code) {
+        response.then().statusCode(code);
+    }
+    @Step("Compare body message")
+    public void compareResponseBodyMessage(Response response, String message) {
+        response.then().assertThat().body("message", equalTo(message));
+    }
+    @Step("Response body login have id field")
+    public void responseBodyLoginHaveId(Response response) {
+        response.then().assertThat().body("id", notNullValue());
+    }
 
     @Test
     public void successfulAuthCourierTest() {
         createCourier();
-        loginCourier().
-                then().statusCode(200);
+        Response response = loginCourier();
+        compareStatusCode(response, 200);
         deleteCourier();
     }
 
     @Test
     public void successfulRequestReturnIdTest() {
         createCourier();
-        loginCourier()
-                .then().assertThat().body("id", notNullValue());
+        Response response = loginCourier();
+        responseBodyLoginHaveId(response);
         deleteCourier();
     }
 
     @Test
     public void authNonExistentCourierTest() {
-        loginCourier()
-                .then().statusCode(404)
-                .assertThat().body("message", equalTo("Учетная запись не найдена"));
+        Response response = loginCourier();
+        compareStatusCode(response, 404);
+        compareResponseBodyMessage(response, "Учетная запись не найдена");
     }
 
     @Test
@@ -60,8 +72,8 @@ public class LoginCourierTest extends BaseHttpClient {
         createCourier();
         FailLoginCourier courierWithoutLogin = new FailLoginCourier(courier.getPassword());
         Response response = doPostRequest("api/v1/courier/login", courierWithoutLogin);
-        response.then().statusCode(400)
-                .assertThat().body("message", equalTo("Недостаточно данных для входа"));
+        compareStatusCode(response, 400);
+        compareResponseBodyMessage(response, "Недостаточно данных для входа");
         deleteCourier();
 
     }
