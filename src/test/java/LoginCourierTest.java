@@ -13,32 +13,7 @@ public class LoginCourierTest extends BaseHttpClient {
     Courier courier = new Courier("test2025", "1234", "ivan");
     LoginCourier loginCourier = new LoginCourier(courier.getLogin(), courier.getPassword());
 
-    @Step("Send POST request to api/v1/courier")
-    public void createCourier() {
-        doPostRequest("api/v1/courier", courier);
-    }
-    @Step("Send DELETE request to api/v1/courier/:id")
-    public void deleteCourier() {
-        int id = doPostRequest("api/v1/courier/login", loginCourier)
-                .then().extract().body().path("id");
-        doDeleteRequest("api/v1/courier/" + id);
-    }
-    @Step("Send POST request to api/v1/courier/login")
-    public Response loginCourier() {
-       return doPostRequest("api/v1/courier/login", loginCourier);
-    }
-    @Step("Compare status code")
-    public void compareStatusCode(Response response, int code) {
-        response.then().statusCode(code);
-    }
-    @Step("Compare body message")
-    public void compareResponseBodyMessage(Response response, String message) {
-        response.then().assertThat().body("message", equalTo(message));
-    }
-    @Step("Response body login have id field")
-    public void responseBodyLoginHaveId(Response response) {
-        response.then().assertThat().body("id", notNullValue());
-    }
+
 
     @Test
     @DisplayName("Курьер может авторизоваться")
@@ -89,5 +64,37 @@ public class LoginCourierTest extends BaseHttpClient {
         compareResponseBodyMessage(response, "Недостаточно данных для входа");
         deleteCourier();
 
+    }
+
+    @Step("Send POST request to api/v1/courier")
+    public void createCourier() {
+        doPostRequest("api/v1/courier", courier);
+    }
+
+    @Step("Send DELETE request to api/v1/courier/:id")
+    public void deleteCourier() {
+        int id = doPostRequest("api/v1/courier/login", loginCourier)
+                .then().extract().body().path("id");
+        doDeleteRequest("api/v1/courier/" + id);
+    }
+
+    @Step("Send POST request to api/v1/courier/login")
+    public Response loginCourier() {
+        return doPostRequest("api/v1/courier/login", loginCourier);
+    }
+
+    @Step("Compare status code")
+    public void compareStatusCode(Response response, int code) {
+        response.then().statusCode(code);
+    }
+
+    @Step("Compare body message")
+    public void compareResponseBodyMessage(Response response, String message) {
+        response.then().assertThat().body("message", equalTo(message));
+    }
+
+    @Step("Response body login have id field")
+    public void responseBodyLoginHaveId(Response response) {
+        response.then().assertThat().body("id", notNullValue());
     }
 }
