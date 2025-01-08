@@ -1,16 +1,12 @@
+import io.qameta.allure.Description;
 import io.qameta.allure.Step;
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
-//    курьер может авторизоваться;+
-//    для авторизации нужно передать все обязательные поля;+
-//    система вернёт ошибку, если неправильно указать логин или пароль;+
-//    если какого-то поля нет, запрос возвращает ошибку;+
-//    если авторизоваться под несуществующим пользователем, запрос возвращает ошибку;+
-//    успешный запрос возвращает id.+
 
 public class LoginCourierTest extends BaseHttpClient {
 
@@ -45,6 +41,7 @@ public class LoginCourierTest extends BaseHttpClient {
     }
 
     @Test
+    @DisplayName("Курьер может авторизоваться")
     public void successfulAuthCourierTest() {
         createCourier();
         Response response = loginCourier();
@@ -53,6 +50,7 @@ public class LoginCourierTest extends BaseHttpClient {
     }
 
     @Test
+    @DisplayName("Успешный запрос возвращает id")
     public void successfulRequestReturnIdTest() {
         createCourier();
         Response response = loginCourier();
@@ -61,6 +59,7 @@ public class LoginCourierTest extends BaseHttpClient {
     }
 
     @Test
+    @DisplayName("Авторизация несуществующего курьера возвращает ошибку")
     public void authNonExistentCourierTest() {
         Response response = loginCourier();
         compareStatusCode(response, 404);
@@ -68,15 +67,27 @@ public class LoginCourierTest extends BaseHttpClient {
     }
 
     @Test
+    @DisplayName("Авторизация с неправильно указанным логином возвращает ошибку")
+    public void cantAuthCourierFailLoginTest() {
+        createCourier();
+        Courier failLoginCourier = new Courier("test2052", courier.getPassword(), courier.getFirstName());
+        Response response = doPostRequest("api/v1/courier/login", failLoginCourier);
+        compareStatusCode(response, 404);
+        compareResponseBodyMessage(response, "Учетная запись не найдена");
+        deleteCourier();
+
+    }
+
+    @Test
+    @DisplayName("Eсли какого-то поля нет, запрос возвращает ошибку")
+    @Description("Для авторизации нужно передать все обязательные поля")
     public void cantAuthCourierWithoutloginTest() {
         createCourier();
-        FailLoginCourier courierWithoutLogin = new FailLoginCourier(courier.getPassword());
+        WithoutLoginCourier courierWithoutLogin = new WithoutLoginCourier(courier.getPassword());
         Response response = doPostRequest("api/v1/courier/login", courierWithoutLogin);
         compareStatusCode(response, 400);
         compareResponseBodyMessage(response, "Недостаточно данных для входа");
         deleteCourier();
 
     }
-
-
 }

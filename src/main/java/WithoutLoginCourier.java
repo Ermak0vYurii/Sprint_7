@@ -1,11 +1,11 @@
-public class FailLoginCourier {
+public class WithoutLoginCourier {
 
     private String password;
 
-    public FailLoginCourier(String password) {
+    public WithoutLoginCourier(String password) {
         this.password = password;
     }
-    public FailLoginCourier() {
+    public WithoutLoginCourier() {
     }
 
     public String getPassword() {
