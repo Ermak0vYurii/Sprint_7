@@ -42,7 +42,7 @@ public class CreateOrderTest extends BaseHttpClient {
                                 color.split(","));
         Response response = createOrder(order);
         compareStatusCode(response, 201);
-                responseBodyHaveTrack(response);
+                responseBodyContainsTrack(response);
     }
 
     @Step("Send POST request to api/v1/orders")
@@ -55,8 +55,8 @@ public class CreateOrderTest extends BaseHttpClient {
         response.then().statusCode(code);
     }
 
-    @Step("Response body have track field")
-    public void responseBodyHaveTrack(Response response) {
+    @Step("Response body contains track field")
+    public void responseBodyContainsTrack(Response response) {
         response.then().assertThat().body("track", notNullValue());
     }
 }
