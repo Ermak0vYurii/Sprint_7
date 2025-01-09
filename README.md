@@ -35,6 +35,6 @@ mvn clean test
 3. Для создания отчета в Allure ввести команду
 
 ```sh
-mvn allure:report
+mvn allure:serve
 ```
 

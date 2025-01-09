@@ -12,12 +12,17 @@ public class OrdersListTest extends BaseHttpClient {
     public void getOrderListTest() {
 
         Response response = getOrderList();
+        compareStatusCode(response, 200);
         containsOrdersInBody(response);
     }
 
     @Step("Send GET request to api/v1/orders")
     public Response getOrderList() {
         return doGetRequest("api/v1/orders");
+    }
+    @Step("Compare status code")
+    public void compareStatusCode(Response response, int code) {
+        response.then().statusCode(code);
     }
 
     @Step("Response body contains Orders")
