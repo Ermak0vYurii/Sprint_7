@@ -36,7 +36,8 @@ public class LoginCourierTest extends BaseHttpClient {
     @Test
     @DisplayName("Авторизация несуществующего курьера возвращает ошибку")
     public void authNonExistentCourierTest() {
-        Response response = loginCourier();
+        LoginCourier loginNonExistentCourier = new LoginCourier("lkjhtyubx", "0000");
+        Response response = doPostRequest("api/v1/courier/login",loginNonExistentCourier);
         compareStatusCode(response, 404);
         compareResponseBodyMessage(response, "Учетная запись не найдена");
     }
